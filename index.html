@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101725">
+<meta name="description" content="Nedräkning till World of Warcraft: Forever i Europa.">
+<link rel="manifest" href="manifest.json">
+<title>WoW Forever — Nedräkning</title>
+<style>
+:root{color-scheme:dark;--gold:#f2d28b;--pale:#fff1c7;--muted:#bac5d6;--panel:rgba(9,15,27,.86)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;padding:18px;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#f8f5ee;background:linear-gradient(180deg,rgba(7,13,24,.28),rgba(7,13,24,.82)),url("background.png") center center/cover fixed no-repeat;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.42;background:radial-gradient(circle at 12% 18%,#d6c28c 0 1px,transparent 2px),radial-gradient(circle at 78% 23%,#d6c28c 0 1px,transparent 2px),radial-gradient(circle at 28% 62%,#d6c28c 0 1px,transparent 2px),radial-gradient(circle at 87% 73%,#d6c28c 0 1px,transparent 2px);background-size:170px 190px,230px 210px,190px 170px,240px 220px}
+.wrap{width:min(100%,440px);position:relative}
+.card{border:1px solid #9e814c;border-radius:24px;padding:25px 18px 20px;background:linear-gradient(155deg,rgba(12,23,39,.70),rgba(7,12,22,.82) 65%);box-shadow:0 18px 55px #0008,inset 0 0 0 3px #d5b66a14;text-align:center;overflow:hidden}
+.sig{font-size:42px;line-height:1;margin-bottom:10px;filter:drop-shadow(0 0 14px #9ec9ff66)}
+.kicker{font-size:11px;letter-spacing:.22em;color:var(--gold);font-weight:800}
+h1{font-family:Georgia,serif;font-size:clamp(28px,8vw,39px);line-height:1.05;color:var(--pale);margin:9px 0 6px;text-shadow:0 2px 14px #e6b95b3d}
+.sub{font-size:13px;color:var(--muted);margin-bottom:22px}
+.count{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.unit{padding:14px 3px 11px;border:1px solid #8e774d88;border-radius:12px;background:linear-gradient(#24374b,#121d2d)}
+.num{font-variant-numeric:tabular-nums;font-size:clamp(25px,7vw,35px);font-weight:800;color:white;line-height:1.1}
+.label{font-size:10px;letter-spacing:.1em;color:var(--gold);margin-top:7px}
+.target{margin:20px 0 0;color:var(--pale);font-weight:700;font-size:14px}
+.status{font-size:13px;color:var(--muted);margin-top:9px;min-height:20px}
+.line{height:1px;background:linear-gradient(90deg,transparent,#b89b5c,transparent);margin:18px 0 14px}
+.note{font-size:11px;line-height:1.5;color:#9caabd}
+a{color:var(--gold)}
+button{margin-top:16px;border:1px solid #c5a763;background:#27394d;color:#fff1c7;border-radius:10px;padding:10px 14px;font-weight:700}
+@media(max-width:350px){.card{padding:21px 12px}.count{gap:5px}.unit{padding:12px 1px 9px}.label{font-size:9px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<section class="card" aria-label="Nedräkning till WoW Forever">
+<div class="sig" aria-hidden="true">⚔️</div>
+<div class="kicker">EUROPEAN LAUNCH</div>
+<h1>WORLD OF WARCRAFT<br>FOREVER</h1>
+<div class="sub">Azeroth kallar. Ditt nästa äventyr väntar.</div>
+<div class="count" aria-live="polite">
+<div class="unit"><div class="num" id="days">--</div><div class="label">DAGAR</div></div>
+<div class="unit"><div class="num" id="hours">--</div><div class="label">TIMMAR</div></div>
+<div class="unit"><div class="num" id="mins">--</div><div class="label">MIN</div></div>
+<div class="unit"><div class="num" id="secs">--</div><div class="label">SEK</div></div>
+</div>
+<div class="target">5 NOVEMBER 2026 · 00:00 CET</div>
+<div class="status" id="status">Förbereder portalen till Azeroth…</div>
+<div class="line"></div>
+<div class="note">Nedräkningen följer enhetens klocka. Blizzard anger global lansering 4 nov kl. 15.00 PST, vilket motsvarar 5 nov kl. 00.00 svensk tid.</div>
+<button id="install" hidden>Installera appen</button>
+</section>
+</main>
+<script>
+const target = new Date("2026-11-05T00:00:00+01:00").getTime();
+const $ = id => document.getElementById(id);
+function tick(){
+ let diff=target-Date.now();
+ if(diff<=0){
+  ["days","hours","mins","secs"].forEach(id=>$(id).textContent="00");
+  $("status").textContent="Releasetiden är här — dags att logga in!";
+  return;
+ }
+ const d=Math.floor(diff/86400000); diff%=86400000;
+ const h=Math.floor(diff/3600000); diff%=3600000;
+ const m=Math.floor(diff/60000); diff%=60000;
+ const s=Math.floor(diff/1000);
+ $("days").textContent=String(d).padStart(2,"0");
+ $("hours").textContent=String(h).padStart(2,"0");
+ $("mins").textContent=String(m).padStart(2,"0");
+ $("secs").textContent=String(s).padStart(2,"0");
+ $("status").textContent="Portalen öppnas om…";
+}
+tick(); setInterval(tick,1000);
+let promptEvent;
+window.addEventListener("beforeinstallprompt", e=>{e.preventDefault();promptEvent=e;$("install").hidden=false;});
+$("install").addEventListener("click",async()=>{if(!promptEvent)return;promptEvent.prompt();await promptEvent.userChoice;promptEvent=null;$("install").hidden=true;});
+if("serviceWorker" in navigator && location.protocol.startsWith("http")) window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+</script>
+</body>
+</html>
